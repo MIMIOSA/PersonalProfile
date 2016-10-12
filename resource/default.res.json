@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,haha_jpg,description_json",
+			"keys": "bg_jpg,description_json,bg2_jpg,myphoto_png",
 			"name": "preload"
 		}
 	],
@@ -12,19 +12,24 @@
 			"url": "assets/bg.jpg"
 		},
 		{
-			"name": "egret_icon_png",
-			"type": "image",
-			"url": "assets/egret_icon.png"
-		},
-		{
-			"name": "haha_jpg",
-			"type": "image",
-			"url": "assets/haha.jpg"
-		},
-		{
 			"name": "description_json",
 			"type": "json",
 			"url": "config/description.json"
+		},
+		{
+			"name": "bg (2)_jpg",
+			"type": "image",
+			"url": "assets/bg (2).jpg"
+		},
+		{
+			"name": "bg2_jpg",
+			"type": "image",
+			"url": "assets/bg2.jpg"
+		},
+		{
+			"name": "myphoto_png",
+			"type": "image",
+			"url": "assets/myphoto.png"
 		}
 	]
 }

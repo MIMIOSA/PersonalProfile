@@ -101,48 +101,88 @@ var Main = (function (_super) {
      * Create a game scene
      */
     p.createGameScene = function () {
+        //2
+        var sky2 = this.createBitmapByName("bg2_jpg");
+        this.addChild(sky2);
+        sky2.width = stageW;
+        sky2.height = stageH;
+        sky2.y = 1164;
+        this.addChild(sky2);
+        //1
         var sky = this.createBitmapByName("bg_jpg");
         this.addChild(sky);
         var stageW = this.stage.stageWidth;
         var stageH = this.stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
+        this.addChild(sky);
+        this.MoveTotalPage(this, 2);
+    };
+    p.MoveTotalPage = function (totalStage, PageNumber) {
+        var _this = this;
+        //页面转换
+        totalStage.touchEnabled = true;
+        totalStage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (e) {
+            //计算手指和要拖动的对象的距离
+            offsetX = e.stageX - totalStage.x;
+            offsetY = e.stageY - totalStage.y;
+            //手指在屏幕上移动，会触发 onMove 方法
+            totalStage.addEventListener(egret.TouchEvent.TOUCH_MOVE, onMove, _this);
+        });
+        var offsetX;
+        var offsetY;
+        var stageW = this.stage.stageWidth;
+        var stageH = this.stage.stageHeight;
+        function onMove(MouseTouch) {
+            //通过计算手指在屏幕上的位置，计算当前对象的坐标，达到跟随手指移动的效果
+            totalStage.x = MouseTouch.stageX - offsetX;
+            totalStage.y = MouseTouch.stageY - offsetY;
+            totalStage.addEventListener(egret.TouchEvent.TOUCH_END, stopMove, this);
+        }
+        function stopMove(MouseTouch) {
+            var thisObjectMove = egret.Tween.get(this);
+            var currentX = MouseTouch.stageX - offsetX;
+            var currentY = MouseTouch.stageY - offsetY;
+            if (currentY < -(stageH / 2)) {
+                thisObjectMove.to({ x: 0, y: -stageH - 200 }, 100).to({ x: 0, y: -stageH + 150 }, 150).to({ x: 0, y: -stageH }, 150);
+            }
+            else {
+                thisObjectMove.to({ x: 0, y: -200 }, 100).to({ x: 0, y: +150 }, 150).to({ x: 0, y: 0 }, 150);
+            }
+            //手指离开屏幕，移除手指移动的监听
+            totalStage.removeEventListener(egret.TouchEvent.TOUCH_MOVE, onMove, this);
+        }
         var topMask = new egret.Shape();
         topMask.graphics.beginFill(0x000000, 0.5);
         topMask.graphics.drawRect(0, 0, stageW, 172);
         topMask.graphics.endFill();
         topMask.y = 33;
-        this.addChild(topMask);
-        var icon = this.createBitmapByName("egret_icon_png");
-        this.addChild(icon);
-        icon.x = 26;
-        icon.y = 33;
+        totalStage.addChild(topMask);
+        var icon = this.createBitmapByName("myphoto_png");
+        totalStage.addChild(icon);
+        icon.x = 16;
+        icon.y = 23;
+        var logoTween = egret.Tween.get(icon, { "loop": true }); //logo循环移动
+        logoTween.to({ x: 80 }, 2000).to({ y: 50 }, 2000).to({ x: 16 }, 1000).to({ y: 23 }, 500);
         var line = new egret.Shape();
         line.graphics.lineStyle(2, 0xffffff);
         line.graphics.moveTo(0, 0);
         line.graphics.lineTo(0, 117);
         line.graphics.endFill();
-        line.x = 172;
+        line.x = 200;
         line.y = 61;
-        this.addChild(line);
-        var colorLabel = new egret.TextField();
-        colorLabel.textColor = 0xffffff;
-        colorLabel.width = stageW - 172;
-        colorLabel.textAlign = "center";
-        colorLabel.text = "Hello Egret";
-        colorLabel.size = 24;
-        colorLabel.x = 172;
-        colorLabel.y = 80;
-        this.addChild(colorLabel);
-        var haha = this.createBitmapByName("haha_jpg");
-        this.addChild(haha);
-        haha.x = 400;
-        haha.y = 250;
-        haha.scaleX = haha.scaleY = 0.2;
-        var tween = egret.Tween.get(haha);
-        tween.to({ x: 100, y: 1000 }, 3000).to({ y: 50 }, 2000);
+        totalStage.addChild(line);
+        var NameLabel = new egret.TextField();
+        NameLabel.textColor = 0xffffff;
+        NameLabel.width = stageW - 172;
+        NameLabel.textAlign = "center";
+        NameLabel.text = "PersonalProfile";
+        NameLabel.size = 24;
+        NameLabel.x = 172;
+        NameLabel.y = 80;
+        totalStage.addChild(NameLabel);
         var textfield = new egret.TextField();
-        this.addChild(textfield);
+        totalStage.addChild(textfield);
         textfield.alpha = 0;
         textfield.width = stageW - 172;
         textfield.textAlign = egret.HorizontalAlign.CENTER;
@@ -151,14 +191,12 @@ var Main = (function (_super) {
         textfield.x = 172;
         textfield.y = 135;
         this.textfield = textfield;
-        //根据name关键字，异步获取一个json配置文件，name属性请参考resources/resource.json配置文件的内容。
-        // Get asynchronously a json configuration file according to name keyword. As for the property of name please refer to the configuration file of resources/resource.json.
         RES.getResAsync("description_json", this.startAnimation, this);
     };
     /**
-     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
-     * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
-     */
+    * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
+    * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
+    */
     p.createBitmapByName = function (name) {
         var result = new egret.Bitmap();
         var texture = RES.getRes(name);
